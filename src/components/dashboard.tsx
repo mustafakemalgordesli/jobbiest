@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react'
 import { JobListing } from '@/components/job-listing'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CreateCompanyForm } from './forms/create-company-form'
+import ErrorBoundary from './error-boundary'
+import { useCompanyStore } from "@/stores/company-store";
+import { GetCompany } from '@/actions/company/get-company'
 
 interface Job {
   id: string
@@ -16,24 +20,28 @@ interface Job {
 }
 
 export function Dashboard() {
+  const {company, update} = useCompanyStore();
+
   const [jobs, setJobs] = useState<Job[]>([])
   const [activeTab, setActiveTab] = useState('active')
 
   useEffect(() => {
+    console.log("Company", company)
+  }, [company])
+
+  useEffect(() => {
+    console.log("çalıştı")
     fetchJobs()
+    getCompany()
   }, [])
 
+  const getCompany = async () => {
+      const company = await GetCompany();
+      console.log(company)
+      update(company)
+  }
+
   const fetchJobs = async () => {
-    try {
-      const response = await fetch('/api/jobs')
-      if (!response.ok) {
-        throw new Error('Failed to fetch jobs')
-      }
-      const data = await response.json()
-      setJobs(data)
-    } catch (error) {
-      console.error('Error fetching jobs:', error)
-    }
   }
 
   const handleDeleteJob = async (id: string) => {
@@ -52,11 +60,12 @@ export function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6">Dashboard {company?.id}</h1>
       <Tabs defaultValue="active" onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="active">Active Jobs</TabsTrigger>
           <TabsTrigger value="expired">Expired Jobs</TabsTrigger>
+          <TabsTrigger value="create-company">Create Company</TabsTrigger>
         </TabsList>
         <TabsContent value="active">
           {filteredJobs.map(job => (
@@ -77,6 +86,11 @@ export function Dashboard() {
               </Button>
             </div>
           ))}
+        </TabsContent>
+        <TabsContent value="create-company">
+          <ErrorBoundary>
+            <CreateCompanyForm />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>
