@@ -1,4 +1,4 @@
-import { JobPostingForm } from '@/components/job-posting-form'
+import { JobPostingForm } from '@/components/forms/job-posting-form'
 
 export default function PostJob() {
   return (

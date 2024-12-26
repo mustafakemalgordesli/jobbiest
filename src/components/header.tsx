@@ -6,7 +6,7 @@ export function Header() {
     <header className="border-b">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <Link href="/" className="text-2xl font-bold">
-          JobFlow
+          Jobiest
         </Link>
         <nav className="space-x-4">
           <Button variant="ghost" asChild>

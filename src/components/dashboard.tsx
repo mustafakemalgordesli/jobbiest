@@ -7,20 +7,31 @@ import ErrorBoundary from "./error-boundary";
 import { useCompanyStore } from "@/stores/company-store";
 import { GetCompany } from "@/actions/company/get-company";
 import CompanyCard from "./company-card";
+import { useJobStore } from "@/stores/job-store";
+import { JobListing } from "./job-listing";
+import { JobPostingForm } from "./forms/job-posting-form";
+import { GetJobs } from "@/actions/jobs/get-jobs";
 
 export function Dashboard() {
   const { company, update } = useCompanyStore();
+  const { jobs, update: updateJobs  } = useJobStore();
 
   const [activeTab, setActiveTab] = useState("active");
 
   useEffect(() => {
     getCompany();
+    getJobs();
   }, []);
 
   const getCompany = async () => {
     const company = await GetCompany();
     update(company);
   };
+
+  const getJobs = async () => {
+    const jobs = await GetJobs()
+    if (jobs != null) updateJobs(jobs)
+  }
 
   return (
     <div>
@@ -29,7 +40,8 @@ export function Dashboard() {
         <TabsList>
           <TabsTrigger value="company">Company</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
-          <TabsTrigger value="active">Active Jobs</TabsTrigger>
+          <TabsTrigger value="create-job">Create Job</TabsTrigger>
+          <TabsTrigger value="jobs">Active Jobs</TabsTrigger>
         </TabsList>
         <TabsContent value="company">
           {company ? (
@@ -40,8 +52,15 @@ export function Dashboard() {
             </ErrorBoundary>
           )}
         </TabsContent>
-        <TabsContent value="active"></TabsContent>
         <TabsContent value="team"></TabsContent>
+        <TabsContent value="create-job">
+          <JobPostingForm />
+        </TabsContent>
+        <TabsContent value="jobs" className="max-w-2xl">
+          {
+            jobs.map(job => <JobListing key={String(job?.id)} job={job}/>)
+          }
+        </TabsContent>
       </Tabs>
     </div>
   );

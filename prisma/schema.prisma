@@ -43,7 +43,6 @@ model Job {
   companyId     String   @db.ObjectId
   company       Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   title         String
-  location      String
   subtitle      String?
   description   String?
   createdAt     DateTime @default(now())
