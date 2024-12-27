@@ -5,6 +5,9 @@ export async function GetJobById(id: string) {
         return await prisma.job.findFirst({
             where: {
                 id: id
+            },
+            include: {
+                company: true
             }
         })
     } catch (error) {

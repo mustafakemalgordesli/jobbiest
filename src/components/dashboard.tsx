@@ -11,10 +11,12 @@ import { useJobStore } from "@/stores/job-store";
 import { JobListing } from "./job-listing";
 import { JobPostingForm } from "./forms/job-posting-form";
 import { GetJobs } from "@/actions/jobs/get-jobs";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 export function Dashboard() {
   const { company, update } = useCompanyStore();
-  const { jobs, update: updateJobs  } = useJobStore();
+  const { jobs, update: updateJobs } = useJobStore();
 
   const [activeTab, setActiveTab] = useState("active");
 
@@ -29,9 +31,9 @@ export function Dashboard() {
   };
 
   const getJobs = async () => {
-    const jobs = await GetJobs()
-    if (jobs != null) updateJobs(jobs)
-  }
+    const jobs = await GetJobs();
+    if (jobs != null) updateJobs(jobs);
+  };
 
   return (
     <div>
@@ -57,9 +59,17 @@ export function Dashboard() {
           <JobPostingForm />
         </TabsContent>
         <TabsContent value="jobs" className="max-w-2xl">
-          {
-            jobs.map(job => <JobListing key={String(job?.id)} job={job}/>)
-          }
+          {jobs.map((job) => (
+            <JobListing
+              key={String(job?.id)}
+              job={job}
+              footer={
+                <Button asChild variant="outline">
+                  <Link href={`/job/${job.id}`}>View Details</Link>
+                </Button>
+              }
+            />
+          ))}
         </TabsContent>
       </Tabs>
     </div>

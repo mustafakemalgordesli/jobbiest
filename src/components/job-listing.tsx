@@ -1,10 +1,23 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import JobModel from '@/models/job'
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import JobModel from "@/models/job";
 
-export function JobListing({job}: {job:JobModel}) {
+export function JobListing({
+  job,
+  footer = null,
+}: {
+  job: JobModel;
+  footer: any | null;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -19,14 +32,14 @@ export function JobListing({job}: {job:JobModel}) {
         <p className="text-sm text-muted-foreground">{job.description}</p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button asChild variant="outline">
-          <Link href={`/job/${job.id}`}>View Details</Link>
-        </Button>
-        <Button asChild>
-          <Link href={`/jobs/${job.id}/apply`}>Apply Now</Link>
-        </Button>
+        {footer ? (
+          footer 
+        ) : (
+          <Button asChild>
+            <Link href={`/jobs/${job.id}/apply`}>Apply Now</Link>
+          </Button>
+        )}
       </CardFooter>
     </Card>
-  )
+  );
 }
-

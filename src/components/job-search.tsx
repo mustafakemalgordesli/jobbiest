@@ -1,55 +1,39 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useState, ChangeEvent, KeyboardEvent } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { GetJobsByPaged } from "@/actions/jobs/get-jobs";
+import { useJobStore } from "@/stores/job-store";
 
-interface JobSearchProps {
-  onSearch: (query: string, category: string, location: string) => void
-}
+export function JobSearch({ page, SetPage, SetSearch }: any) {
+  const { update: updateJobs} = useJobStore();
 
-export function JobSearch({ onSearch }: JobSearchProps) {
-  const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('')
-  const [location, setLocation] = useState('')
+  const [query, setQuery] = useState("");
 
-  const handleSearch = () => {
-    onSearch(query, category, location)
-  }
+  const handleSearch = async () => {
+    const jobs = await GetJobsByPaged(1, 9, query);
+    if (jobs != null) updateJobs(jobs);
+    SetPage(1);
+    SetSearch(query);
+  };
+
+  const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      await handleSearch();
+    }
+  };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-8">
+    <div className="flex flex-col md:flex-row gap-4 mb-8 max-w-2xl mx-auto">
       <Input
         placeholder="Search jobs..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
         className="flex-grow"
       />
-      <Select onValueChange={setCategory} value={category}>
-        <SelectTrigger className="w-full md:w-[180px]">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="technology">Technology</SelectItem>
-          <SelectItem value="finance">Finance</SelectItem>
-          <SelectItem value="healthcare">Healthcare</SelectItem>
-          <SelectItem value="education">Education</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select onValueChange={setLocation} value={location}>
-        <SelectTrigger className="w-full md:w-[180px]">
-          <SelectValue placeholder="Location" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="remote">Remote</SelectItem>
-          <SelectItem value="new-york">New York</SelectItem>
-          <SelectItem value="san-francisco">San Francisco</SelectItem>
-          <SelectItem value="london">London</SelectItem>
-        </SelectContent>
-      </Select>
       <Button onClick={handleSearch}>Search</Button>
     </div>
-  )
+  );
 }
-

@@ -3,44 +3,41 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../submit-button";
 import { ApplyJob } from "@/actions/jobs/apply";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
+import RequiredLabel from "../required-label";
 
 interface JobApplicationFormProps {
   jobId: string;
-  jobTitle: string;
 }
 
 const initialState: {
-  jobId: string;
-  jobTitle: string;
   isSuccess: boolean | null;
   message: string;
 } = {
-  jobId: "",
-  jobTitle: "",
   isSuccess: null,
   message: "",
 };
 
 export function JobApplicationForm({
   jobId,
-  jobTitle,
 }: JobApplicationFormProps) {
   const { toast } = useToast();
   
   const [state, formAction, pending] = useActionState(ApplyJob, {
     ...initialState,
     jobId: jobId,
-    jobTitle: jobTitle,
   });
 
+
+
   return (
-    <form action={formAction} className="space-y-8">
+    <form action={formAction} className="space-y-4 mt-4">
+      <h2 className="text-2xl font-medium text-gray-600">Submit your application</h2>
       <div className="relative">
-        <Label htmlFor="email">Email</Label>
+        <RequiredLabel htmlFor="email" label="Email"/>
         <div className="relative flex items-center">
           <Input
             id="email"

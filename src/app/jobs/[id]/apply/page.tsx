@@ -1,29 +1,24 @@
-import { JobApplicationForm } from '@/components/job-application-form'
-
-async function getJobDetails(id: string) {
-  // In a real application, you would fetch this data from your API or database
-  return {
-    id: "1",
-    title: 'Software Engineer',
-    company: 'TechCorp',
-    location: 'San Francisco, CA',
-  }
-}
+import { GetJobById } from '@/actions/jobs/get-job-by-id'
+import { JobApplicationForm } from '@/components/forms/job-application-form'
+import { notFound } from 'next/navigation'
+import { Badge } from '@/components/ui/badge'
+import Image from 'next/image'
 
 export default async function JobApplicationPage({ params }: { params: { id: string } }) {
   const { id } = await params
-  const job = await getJobDetails(id)
+  const job = await GetJobById(id)
+  if(!job) notFound()
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Apply for {job.title}</h1>
+    <div className="container mx-auto max-w-2xl px-4 py-8">
+      {job.company?.logo && <Image src={String(job.company.logo)} alt="company logo" width={80} height={80} className='rounded mb-4'/>}
+      <h1 className="text-3xl font-bold mb-6">{job.title}</h1>
       <p className="mb-4">
-        <strong>Company:</strong> {job.company}
+        <strong>Company:</strong> {job.company.name}
       </p>
-      <p className="mb-8">
-        <strong>Location:</strong> {job.location}
-      </p>
-      <JobApplicationForm jobId={job.id} jobTitle={job.title} />
+      <Badge variant="secondary" className='mb-4'>{job.subtitle}</Badge>
+      
+      <JobApplicationForm jobId={job.id} />
     </div>
   )
 }
